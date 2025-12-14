@@ -1,0 +1,332 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OJhuang 在线测评网站 - 信息页</title>
+    <style>
+        /* 基础样式重置 */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: "Microsoft YaHei", sans-serif;
+        }
+        body {
+            max-width: 1200px;
+            margin: 20px auto;
+            padding: 0 20px;
+            line-height: 1.8;
+            color: #333;
+            background-color: #f8f9fa;
+        }
+        /* 固定信息区域样式 */
+        .fixed-info {
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            margin-bottom: 30px;
+        }
+        .fixed-info h3 {
+            font-size: 18px;
+            margin: 15px 0 8px 0;
+            color: #2c3e50;
+        }
+        .fixed-info p {
+            margin-left: 20px;
+            font-size: 16px;
+        }
+        .backup {
+            text-align: right;
+            margin-top: 20px;
+            color: #666;
+            font-style: italic;
+        }
+        /* 讨论区样式 */
+        .discussion-area {
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+        .discussion-title {
+            font-size: 18px;
+            color: #2c3e50;
+            margin-bottom: 10px;
+        }
+        .divider {
+            border: none;
+            border-top: 1px solid #ddd;
+            margin: 10px 0 20px 0;
+        }
+        .note {
+            color: #e74c3c;
+            font-weight: bold;
+            margin-bottom: 15px;
+        }
+        /* 输入区域样式 */
+        .input-area {
+            margin-bottom: 20px;
+        }
+        .input-area input, .input-area textarea {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 14px;
+        }
+        .input-area textarea {
+            min-height: 80px;
+            resize: vertical;
+        }
+        .input-area button {
+            background-color: #3498db;
+            color: #fff;
+            border: none;
+            padding: 8px 20px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+        }
+        .input-area button:hover {
+            background-color: #2980b9;
+        }
+        /* 讨论内容展示区 */
+        .discussion-content {
+            min-height: 200px;
+            border: 1px solid #eee;
+            border-radius: 4px;
+            padding: 15px;
+            background-color: #fafafa;
+        }
+        .discussion-item {
+            margin-bottom: 10px;
+            padding-bottom: 10px;
+            border-bottom: 1px dashed #eee;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .discussion-item .msg-content {
+            flex: 1;
+            word-break: break-all;
+        }
+        .discussion-item .delete-btn {
+            background-color: #f1c40f;
+            color: #333;
+            border: none;
+            padding: 3px 8px;
+            border-radius: 3px;
+            cursor: pointer;
+            font-size: 12px;
+            margin-left: 10px;
+        }
+        .discussion-item .delete-btn:hover {
+            background-color: #f39c12;
+        }
+        /* 响应式适配 */
+        @media (max-width: 768px) {
+            body {
+                margin: 10px auto;
+                padding: 0 10px;
+            }
+            .fixed-info p, .note {
+                font-size: 14px;
+            }
+            .discussion-item {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+            .discussion-item .delete-btn {
+                margin-left: 0;
+                margin-top: 5px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- 固定不可改动的信息区域 -->
+    <div class="fixed-info">
+        <h3>介绍</h3>
+        <p>来自中科大旗下的小鼻嘎——HSX创造了OJhuang的在线测评网站</p>
+
+        <h3>联系</h3>
+        <p>QQ群:877496863</p>
+        <p>邮箱:2490504898@qq.com</p>
+        <p>QQ号:2490504898</p>
+
+        <h3>网站:</h3>
+        <p>https://pet-gratefully-terrier.ngrok-free.app</p>
+        <p>(注意！有时候服务器会关闭！但是我们绝不会跑路！</p>
+
+        <h3>公告</h3>
+        <p>暂无</p>
+
+        <p class="backup">已备份2025/12/14</p>
+    </div>
+
+    <!-- 可改动但永久保留的讨论区 -->
+    <div class="discussion-area">
+        <div class="discussion-title">讨论区</div>
+        <hr class="divider">
+        <p class="note">NOTE:注意!禁止辱骂/网爆对方或是发布色情内容!在开头加上:[日期几点][名字]:</p>
+        
+        <!-- 输入区域 -->
+        <div class="input-area">
+            <input type="text" id="username" placeholder="请输入你的名字（撤回留言需要验证此名字）">
+            <textarea id="message" placeholder="请输入留言内容（请遵守留言规则）"></textarea>
+            <button onclick="submitMessage()">提交留言</button>
+        </div>
+
+        <!-- 讨论内容展示区 -->
+        <div class="discussion-content" id="discussionList">
+            加载中...
+        </div>
+    </div>
+
+    <script>
+        // 后端接口地址（确保和server.js的端口一致）
+        const API_BASE = 'http://localhost:3000/api';
+
+        // 页面加载时获取所有留言
+        window.onload = function() {
+            loadMessages();
+        };
+
+        // 格式化时间（ISO字符串转 2025/12/14 10:00 格式）
+        function formatTime(isoTime) {
+            const date = new Date(isoTime);
+            const year = date.getFullYear();
+            const month = String(date.getMonth() + 1).padStart(2, '0');
+            const day = String(date.getDate()).padStart(2, '0');
+            const hour = String(date.getHours()).padStart(2, '0');
+            const minute = String(date.getMinutes()).padStart(2, '0');
+            return `${year}/${month}/${day} ${hour}:${minute}`;
+        }
+
+        // 获取所有留言
+        async function loadMessages() {
+            try {
+                const res = await fetch(`${API_BASE}/messages`);
+                const data = await res.json();
+                if (!data.success) {
+                    alert('加载留言失败：' + data.message);
+                    return;
+                }
+                renderMessages(data.data);
+            } catch (err) {
+                alert('加载留言失败：请检查后端服务是否启动');
+                console.error(err);
+            }
+        }
+
+        // 渲染留言到页面
+        function renderMessages(messages) {
+            const discussionList = document.getElementById('discussionList');
+            discussionList.innerHTML = '';
+
+            if (messages.length === 0) {
+                discussionList.innerHTML = '<p>暂无留言，快来发布第一条吧！</p>';
+                return;
+            }
+
+            messages.forEach(msg => {
+                // 拼接留言显示内容
+                const timeStr = formatTime(msg.createTime);
+                const showContent = `[${timeStr}][${msg.name}]: ${msg.content}`;
+                
+                // 创建留言元素
+                const discussionItem = document.createElement('div');
+                discussionItem.className = 'discussion-item';
+                discussionItem.dataset.msgId = msg.id;
+
+                const msgContent = document.createElement('span');
+                msgContent.className = 'msg-content';
+                msgContent.textContent = showContent;
+
+                const deleteBtn = document.createElement('button');
+                deleteBtn.className = 'delete-btn';
+                deleteBtn.textContent = '撤回';
+                deleteBtn.onclick = () => deleteMessage(msg.id);
+
+                discussionItem.appendChild(msgContent);
+                discussionItem.appendChild(deleteBtn);
+                discussionList.appendChild(discussionItem);
+            });
+        }
+
+        // 提交新留言
+        async function submitMessage() {
+            const username = document.getElementById('username').value.trim();
+            const message = document.getElementById('message').value.trim();
+
+            if (!username) {
+                alert('请输入你的名字！');
+                return;
+            }
+            if (!message) {
+                alert('请输入留言内容！');
+                return;
+            }
+
+            try {
+                const res = await fetch(`${API_BASE}/messages`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ name: username, content: message })
+                });
+                const data = await res.json();
+                if (data.success) {
+                    // 清空输入框
+                    document.getElementById('username').value = '';
+                    document.getElementById('message').value = '';
+                    // 重新加载留言
+                    loadMessages();
+                    alert('留言提交成功！');
+                } else {
+                    alert('提交失败：' + data.message);
+                }
+            } catch (err) {
+                alert('提交失败：请检查后端服务是否启动');
+                console.error(err);
+            }
+        }
+
+        // 撤回留言（验证权限）
+        async function deleteMessage(msgId) {
+            const username = document.getElementById('username').value.trim();
+            if (!username) {
+                alert('请先在输入框填写你发布这条留言时的名字！');
+                return;
+            }
+            if (!confirm(`确认以【${username}】的身份撤回这条留言吗？`)) {
+                return;
+            }
+
+            try {
+                const res = await fetch(`${API_BASE}/messages/${msgId}`, {
+                    method: 'DELETE',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ name: username })
+                });
+                const data = await res.json();
+                if (data.success) {
+                    loadMessages();
+                    alert('留言撤回成功！');
+                } else {
+                    alert('撤回失败：' + data.message);
+                }
+            } catch (err) {
+                alert('撤回失败：请检查后端服务是否启动');
+                console.error(err);
+            }
+        }
+    </script>
+</body>
+</html>
