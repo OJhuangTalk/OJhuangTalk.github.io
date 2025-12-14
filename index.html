@@ -20,6 +20,14 @@
             color: #333;
             background-color: #f8f9fa;
         }
+        /* 主标题样式（重点：标题的样式） */
+        .main-title {
+            text-align: center;    /* 居中显示 */
+            font-size: 28px;       /* 字体大小 */
+            color: #2c3e50;        /* 字体颜色 */
+            margin: 20px 0 30px 0; /* 上下间距 */
+            font-weight: bold;     /* 加粗 */
+        }
         /* 固定信息区域样式 */
         .fixed-info {
             background-color: #fff;
@@ -45,11 +53,15 @@
             font-style: italic;
             font-size: 14px;
         }
-        /* 响应式适配 */
+        /* 响应式适配（移动端标题变小） */
         @media (max-width: 768px) {
             body {
                 margin: 10px auto;
                 padding: 0 10px;
+            }
+            .main-title {
+                font-size: 22px;
+                margin: 15px 0 20px 0;
             }
             .fixed-info {
                 padding: 20px;
@@ -61,7 +73,11 @@
     </style>
 </head>
 <body>
-    <!-- 仅保留固定不可改动的信息区域 -->
+    <!-- ========== 这里就是标题 ========== -->
+    <h1 class="main-title">OJhuang官网</h1>
+    <!-- ================================== -->
+
+    <!-- 固定不可改动的信息区域 -->
     <div class="fixed-info">
         <h3>介绍</h3>
         <p>来自中科大旗下的小鼻嘎——HSX创造了OJhuang的在线测评网站</p>
